@@ -1,0 +1,17 @@
+{
+  "name": "choosy-moms-api",
+  "version": "0.0.0",
+  "description": "choosy-moms-api",
+  "main": "index.js",
+  "author": "cbfx",
+  "repository": "https://github.com/cbfx/choosy-moms-api",
+  "license": "MIT",
+  "engines": {
+    "node": "10.8.0",
+    "npm": "6.2.0"
+  },
+  "config": {},
+  "scripts": {},
+  "dependencies": {},
+  "devDependencies": {}
+}

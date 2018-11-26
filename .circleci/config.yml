@@ -1,0 +1,160 @@
+version: 2
+
+references:
+  workspace_root: &workspace_root
+    /tmp/workspace
+
+  attach_workspace: &attach_workspace
+    attach_workspace:
+      at: *workspace_root
+
+jobs:
+  build:
+    docker:
+      - image: circleci/node:8.10
+    steps:
+      - *attach_workspace
+      - checkout
+      - run:
+          name: build lambda packages
+          command: ./build.sh
+      - run:
+          name: show build dir contents
+          command: ls build
+      - run:
+          name: move build dir to workspace
+          command: cp -R build /tmp/workspace
+      - persist_to_workspace:
+          root: *workspace_root
+          paths:
+            - build
+  shellcheck:
+    docker:
+      - image: nlknguyen/alpine-shellcheck:v0.4.6
+    steps:
+      - checkout
+      - run:
+          name: Check Scripts
+          command: |
+            find . -type f -name '*.sh' | wc -l
+            find . -type f -name '*.sh' | xargs shellcheck --external-sources
+  deploy_custom:
+    docker:
+      - image: circleci/terraform:0.11.7
+    steps:
+      - *attach_workspace
+      - checkout
+      - run:
+          name: restore build dir into workspace (for terraform to use)
+          command: cp -R /tmp/workspace/build build
+      - run:
+          working_directory: terraform/
+          name: "Initialize Terraform: download providers and setup backend"
+          command: terraform init -reconfigure
+      - run:
+          working_directory: terraform/
+          name: "Select Terraform Workspace: select state context"
+          command: terraform workspace select ${CIRCLE_PR_USERNAME:-$CIRCLE_USERNAME} || terraform workspace new ${CIRCLE_PR_USERNAME:-$CIRCLE_USERNAME}
+      - run:
+          working_directory: terraform/
+          name: "Generate Terraform Infrastructure Plan"
+          command: |
+            terraform plan -var "stage=${CIRCLE_PR_USERNAME:-$CIRCLE_USERNAME}" \
+              -out=tf.tfplan
+      - run:
+          working_directory: terraform/
+          name: "Apply Terraform Infrastructure Plan"
+          command: terraform apply tf.tfplan
+  deploy_staging:
+    docker:
+      - image: circleci/terraform:0.11.7
+    steps:
+      - *attach_workspace
+      - checkout
+      - run:
+          name: restore build dir into workspace (for terraform to use)
+          command: cp -R /tmp/workspace/build build
+      - run:
+          working_directory: terraform/
+          name: "Initialize Terraform: download providers and setup backend"
+          command: terraform init -reconfigure
+      - run:
+          working_directory: terraform/
+          name: "Select Terraform Workspace: select state context"
+          command: terraform workspace select staging || terraform workspace new staging
+      - run:
+          working_directory: terraform/
+          name: "Generate Terraform Infrastructure Plan"
+          command: |
+            terraform plan -var "stage=staging" \
+              -out=tf.tfplan
+      - run:
+          working_directory: terraform/
+          name: "Apply Terraform Infrastructure Plan"
+          command: terraform apply tf.tfplan
+  deploy_production:
+    docker:
+      - image: circleci/terraform:0.11.7
+    steps:
+      - *attach_workspace
+      - checkout
+      - run:
+          name: restore build dir into workspace (for terraform to use)
+          command: cp -R /tmp/workspace/build build
+      - run:
+          working_directory: terraform/
+          name: "Initialize Terraform: download providers and setup backend"
+          command: terraform init -reconfigure
+      - run:
+          working_directory: terraform/
+          name: "Select Terraform Workspace: select state context"
+          command: terraform workspace select prod || terraform workspace new prod
+      - run:
+          working_directory: terraform/
+          name: "Generate Terraform Infrastructure Plan"
+          command: |
+            terraform plan -var "stage=prod" \
+              -out=tf.tfplan
+      - run:
+          working_directory: terraform/
+          name: "Apply Terraform Infrastructure Plan"
+          command: terraform apply tf.tfplan
+
+workflows:
+  version: 2
+
+  branch_deploy:
+    jobs:
+      - shellcheck
+      - build:
+          requires:
+            - shellcheck
+      - deploy_staging:
+          <<: *deploy_job_requirements
+          filters:
+            branches:
+              only:
+                - master
+      - deploy_custom:
+          <<: *deploy_job_requirements
+          filters:
+            branches:
+              ignore:
+                - master
+
+  production_deploy:
+    jobs:
+      - shellcheck:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
+      - deploy_production:
+          requires:
+            - shellcheck
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
