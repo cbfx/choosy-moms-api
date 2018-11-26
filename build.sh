@@ -36,7 +36,7 @@ function build_lambda_package {
 
   _lambda_package_name="$1";
   echo "Building '${_lambda_package_name}' lambda."
-  _zip --junk-paths "${_lambda_package_name}".zip ../lambda/"${_lambda_package_name}"/* build.json
+  _zip --junk-paths "${_lambda_package_name}".zip ../lambda/"${_lambda_package_name}"/*
   _zip --grow "${_lambda_package_name}".zip node_modules
 }
 
@@ -48,17 +48,7 @@ fi
 rm -rf build
 mkdir -p build
 
-if [ ! -f build.json ] || [ ! -s build.json ]; then
-    echo "build.json not found, writing."
-    echo '{}' > build/build.json
-fi
-
 echo "Build for version: ${GITSHA}"
-
-CONTENT=$(jq -r --arg GITSHA "${GITSHA}" '.version=$GITSHA' build/build.json)
-
-
-echo "${CONTENT}" > build/build.json
 
 yarn install --frozen-lockfile
 cp -R node_modules build/node_modules

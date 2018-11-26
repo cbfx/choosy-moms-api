@@ -13,5 +13,7 @@
   "config": {},
   "scripts": {},
   "dependencies": {},
-  "devDependencies": {}
+  "devDependencies": {
+    "modclean": "^3.0.0-beta.1"
+  }
 }

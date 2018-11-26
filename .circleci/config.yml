@@ -8,10 +8,14 @@ references:
     attach_workspace:
       at: *workspace_root
 
+  deploy_job_requirements: &deploy_job_requirements
+    requires:
+      - build
+
 jobs:
   build:
     docker:
-      - image: circleci/node:8.10
+      - image: circleci/node:10.8.0
     steps:
       - *attach_workspace
       - checkout

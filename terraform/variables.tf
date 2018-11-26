@@ -5,7 +5,7 @@ variable "aws_region" {
 
 variable "service_name" {
   type = "string"
-  default = "choosy_moms_api"
+  default = "choosy-moms-api"
 }
 
 variable "api_domain" {
@@ -28,7 +28,11 @@ locals {
 }
 
 locals {
-  deploy_domain = "${local.is_production ? format("api.%s", var.api_domain) : format("%s.api.%s", var.stage, var.api_domain)}"
-  cert_domain   = "${local.is_production ? var.api_domain : format("*.%s", var.api_domain)}"
+  api_url = "${format("api.%s", var.api_domain)}"
+}
+
+locals {
+  deploy_domain = "${local.is_production ? local.api_url : format("%s.%s", var.stage, local.api_url)}"
+  cert_domain   = "${local.is_production ? local.api_url : format("*.%s", local.api_url)}"
   domain_zone   = "${var.api_domain}"
 }

@@ -48,7 +48,8 @@ resource "aws_iam_role_policy" "base_lambda_policy" {
 module "giphy_lambda" {
   source = "./modules/lambda"
   alias = "${var.stage}"
-  name =  "hello"
+  service_name = "${var.service_name}"
+  name =  "giphy"
   package = "../build/giphy.zip"
   aws_region = "${var.aws_region}"
   role = "${aws_iam_role.lambda_exec.arn}"
@@ -58,6 +59,7 @@ module "giphy_lambda" {
 module "users_lambda" {
   source = "./modules/lambda"
   alias = "${var.stage}"
+  service_name = "${var.service_name}"
   name =  "users"
   package = "../build/users.zip"
   aws_region = "${var.aws_region}"
