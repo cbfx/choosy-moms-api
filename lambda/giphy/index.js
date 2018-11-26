@@ -1,6 +1,6 @@
-'use strict';
+exports.handler = function(event, context, callback) {
+  'use strict';
 
-exports.handler = function (event, context, callback) {
   const response = {
     isBase64Encoded: false,
     statusCode: 200,
