@@ -61,6 +61,8 @@ pushd build
 # This writes build/hello.zip, build/version.zip, etc.
 build_lambda_package giphy
 build_lambda_package users
+build_lambda_package collections
+build_lambda_package saved
 
 # back to where we were
 popd
