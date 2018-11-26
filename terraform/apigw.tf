@@ -35,10 +35,12 @@ data "template_file" "swagger_file" {
   template = "${file(pathexpand(var.swagger_file))}"
 
   vars {
-    invoker_role             = "${aws_iam_role.api_gateway_invoker.arn}"
-    giphy_invocation_arn     = "${module.giphy_lambda.invocation_arn}"
-    users_invocation_arn     = "${module.users_lambda.invocation_arn}"
-    stage                    = "${var.stage}"
+    invoker_role                = "${aws_iam_role.api_gateway_invoker.arn}"
+    giphy_invocation_arn        = "${module.giphy_lambda.invocation_arn}"
+    users_invocation_arn        = "${module.users_lambda.invocation_arn}"
+    collections_invocation_arn  = "${module.collections_lambda.invocation_arn}"
+    saved_invocation_arn        = "${module.saved_lambda.invocation_arn}"
+    stage                       = "${var.stage}"
   }
 }
 

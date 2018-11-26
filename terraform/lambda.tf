@@ -66,3 +66,25 @@ module "users_lambda" {
   role = "${aws_iam_role.lambda_exec.arn}"
   bucket = "${aws_s3_bucket.lambdas.id}"
 }
+
+module "collections_lambda" {
+  source = "./modules/lambda"
+  alias = "${var.stage}"
+  service_name = "${var.service_name}"
+  name =  "collections"
+  package = "../build/collections.zip"
+  aws_region = "${var.aws_region}"
+  role = "${aws_iam_role.lambda_exec.arn}"
+  bucket = "${aws_s3_bucket.lambdas.id}"
+}
+
+module "saved_lambda" {
+  source = "./modules/lambda"
+  alias = "${var.stage}"
+  service_name = "${var.service_name}"
+  name =  "saved"
+  package = "../build/saved.zip"
+  aws_region = "${var.aws_region}"
+  role = "${aws_iam_role.lambda_exec.arn}"
+  bucket = "${aws_s3_bucket.lambdas.id}"
+}
