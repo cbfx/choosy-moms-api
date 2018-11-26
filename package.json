@@ -12,7 +12,9 @@
   },
   "config": {},
   "scripts": {},
-  "dependencies": {},
+  "dependencies": {
+    "aws-sdk": "^2.4.11"
+  },
   "devDependencies": {
     "modclean": "^3.0.0-beta.1"
   }
