@@ -1,3 +1,3 @@
 exports.default = {
-  tableName: 'collections'
+  tableName: 'choosy-moms-api-collections'
 };

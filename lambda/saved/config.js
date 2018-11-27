@@ -1,3 +1,3 @@
 exports.default = {
-  tableName: 'saved'
+  tableName: 'choosy-moms-api-saved'
 };
