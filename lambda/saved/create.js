@@ -7,16 +7,18 @@ module.exports = function(event, context, callback) {
 
   const claims = event.requestContext.authorizer.claims;
   const userId = claims['cognito:username'];
+  const body = JSON.parse(event.body);
 
+  console.log('event', event);
   console.log('claims', claims, userId);
 
   const params = {
 		TableName: config.tableName,
     Item: {
       userId: userId,
-      gifId: event.body.gifId,
-      gifPreviewUrl: event.body.gifPreviewUrl,
-      collectionId: event.body.collectionId
+      gifId: body.gifId,
+      gifPreviewUrl: body.gifPreviewUrl,
+      collectionId: body.collectionId
     }
 	};
 
