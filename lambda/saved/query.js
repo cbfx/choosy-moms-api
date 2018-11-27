@@ -5,8 +5,8 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient();
 module.exports = function(event, context, callback) {
   'use strict';
 
-  const queryStringParameters = event.queryStringParameters || {};
-  const userId = queryStringParameters.userId;
+  const claims = event.requestContext.authorizer.claims;
+  const userId = claims['cognito:username'];
 
   const params = {
 		TableName: config.tableName,
@@ -42,5 +42,5 @@ module.exports = function(event, context, callback) {
       response.body.errors = JSON.stringify([err]);
 
       return callback(null, response);
-    })
+    });
 }

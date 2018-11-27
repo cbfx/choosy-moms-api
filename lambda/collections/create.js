@@ -1,18 +1,21 @@
-import AWS from 'aws-sdk';
-import config from './config';
-
+const AWS = require('aws-sdk');
+const uuidv4 = require('uuid/v4');
+const config = require('./config.js');
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
-exports.default = function(event, context, callback) {
+module.exports = function(event, context, callback) {
   'use strict';
 
-  const { userId } = event.queryStringParameters;
+  const claims = event.requestContext.authorizer.claims;
+  const userId = claims['cognito:username'];
+  const body = JSON.parse(event.body);
 
   const params = {
 		TableName: config.tableName,
-    KeyConditionExpression: "UserId = :u",
-    ExpressionAttributeValues: {
-      ":u": userId
+    Item: {
+      userId: userId,
+      id: uuidv4(),
+      name: body.name
     }
 	};
 
@@ -25,29 +28,20 @@ exports.default = function(event, context, callback) {
     body: {}
   };
 
-  return dynamoDb.query(params)
+  return dynamoDb.put(params)
     .promise()
     .then((res) => {
       response.statusCode = 200;
       response.body = JSON.stringify({
-        data: {
-          items: [...res.Items]
-        }
+        data: params.Item
       });
 
-      return res;
+      return callback(null, response);
   	})
     .catch((err) => {
-      response.statusCode = err.output.statusCode;
-      response.body.errors = JSON.stringify([{
-        title: err.output.payload.error,
-        detail: err.message,
-        status: err.output.statusCode.toString(),
-      }]);
+      response.statusCode = 400;
+      response.body.errors = JSON.stringify([err]);
 
-      return err;
-    })
-    .finally(() => {
-      callback(null, response);
+      return callback(null, response);
     });
 }

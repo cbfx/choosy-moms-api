@@ -3,7 +3,7 @@ resource "aws_dynamodb_table" "collections" {
   read_capacity  = 1
   write_capacity = 1
   hash_key       = "userId"
-  range_key      = "id"
+  range_key      = "collectionId"
 
   attribute {
     name = "userId"
@@ -11,7 +11,7 @@ resource "aws_dynamodb_table" "collections" {
   }
 
   attribute {
-    name = "id"
+    name = "collectionId"
     type = "S"
   }
 }
@@ -21,7 +21,7 @@ resource "aws_dynamodb_table" "saved" {
   read_capacity  = 1
   write_capacity = 1
   hash_key       = "userId"
-  range_key      = "id"
+  range_key      = "gifId"
 
   attribute {
     name = "userId"
@@ -29,7 +29,7 @@ resource "aws_dynamodb_table" "saved" {
   }
 
   attribute {
-    name = "id"
+    name = "gifId"
     type = "S"
   }
 }
