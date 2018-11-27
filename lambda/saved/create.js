@@ -1,6 +1,7 @@
 const AWS = require('aws-sdk');
 const config = require('./config.js');
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
+const jwt = require('jsonwebtoken');
 
 module.exports = function(event, context, callback) {
   'use strict';
@@ -10,8 +11,10 @@ module.exports = function(event, context, callback) {
   console.log('context:  ', context);
   console.log('claims', event.requestContext.authorizer.claims)
 
-  const userId = event.requestContext.identity.cognitoIdentityId;
-  let body;
+  const authHeader = event.headers.Authorization;
+  const token = authHeader.split(' ')[1];
+  const decodedToken = jwt.decode(token);
+  const userId = decodedToken['cognito:username'];
 
   const params = {
 		TableName: config.tableName,
