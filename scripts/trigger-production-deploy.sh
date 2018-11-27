@@ -1,5 +1,4 @@
 #!/bin/bash
-# shellcheck disable=SC2021,SC2002,SC2034
 
 # If you don't want to deploy the latest version, you can just specify the SHA
 # of an older revision as the only argument to this script.
