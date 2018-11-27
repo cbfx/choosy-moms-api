@@ -4,8 +4,6 @@ const query = require('./query.js');
 const remove = require('./remove.js');
 const update = require('./update.js');
 
-const test = require('./test.js');
-
 exports.handler = function(event, context, callback) {
   'use strict';
 
@@ -19,9 +17,9 @@ exports.handler = function(event, context, callback) {
 
     case 'GET':
       if (savedId) {
-        return test(event, context, callback);
+        return get(event, context, callback);
       } else {
-        return test(event, context, callback);
+        return query(event, context, callback);
       }
 
       break;
