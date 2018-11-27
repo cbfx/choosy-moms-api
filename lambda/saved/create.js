@@ -8,6 +8,8 @@ module.exports = function(event, context, callback) {
   const claims = event.requestContext.authorizer.claims;
   const userId = claims['cognito:username'];
 
+  console.log('claims', claims, userId);
+
   const params = {
 		TableName: config.tableName,
     Item: {
@@ -27,20 +29,25 @@ module.exports = function(event, context, callback) {
     body: {}
   };
 
+  console.log('params', params);
+  console.log('response pre PUT', response);
+
   return dynamoDb.put(params)
     .promise()
     .then((res) => {
+      console.log('successful PUT', res);
       response.statusCode = 200;
       response.body = JSON.stringify({
         data: res
       });
 
-      return callback(null, response);
+      callback(null, response);
   	})
     .catch((err) => {
+      console.log('bad PUT', err);
       response.statusCode = 400;
       response.body.errors = JSON.stringify([err]);
 
-      return callback(null, response);
+      callback(null, response);
     });
 }
