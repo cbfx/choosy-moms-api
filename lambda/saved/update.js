@@ -9,6 +9,7 @@ module.exports = function(event, context, callback) {
   const userId = claims['cognito:username'];
   const pathParameters = event.pathParameters || {};
   const gifId = pathParameters.gifId;
+  const body = JSON.parse(event.body);
 
   const params = {
 		TableName: config.tableName,
@@ -16,9 +17,9 @@ module.exports = function(event, context, callback) {
       userId,
       gifId
     },
-    UpdateExpression: "set gifId :g",
+    UpdateExpression: "set gifPreviewUrl :g",
     ExpressionAttributeValues: {
-      ":g": gifId
+      ":g": body.gifPreviewUrl
     },
     ReturnValues: "UPDATED_NEW"
 	};

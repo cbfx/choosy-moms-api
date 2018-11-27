@@ -12,10 +12,10 @@ module.exports = function(event, context, callback) {
 
   const params = {
 		TableName: config.tableName,
-    KeyConditionExpression: "userId = :u",
+    KeyConditionExpression: "userId = :u and gifId = :g",
     ExpressionAttributeValues: {
       ":u": userId,
-      ":u": gifId
+      ":g": gifId
     }
 	};
 
