@@ -8,8 +8,9 @@ module.exports = function(event, context, callback) {
   console.log('executing saved create lambda');
   console.log('event:  ', event);
   console.log('context:  ', context);
+  console.log('claims', event.requestContext.authorizer.claims)
 
-  const userId = context.requestContext.identity.cognitoIdentityId;
+  const userId = event.requestContext.identity.cognitoIdentityId;
   let body;
 
   const params = {
@@ -30,6 +31,8 @@ module.exports = function(event, context, callback) {
     },
     body: {}
   };
+
+  return;
 
   return dynamoDb.put(params)
     .promise()
