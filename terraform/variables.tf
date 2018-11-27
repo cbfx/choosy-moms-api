@@ -33,6 +33,10 @@ variable "stage" {
   default = "live"
 }
 
+variable "giphy_api_key" {
+  type = "string"
+}
+
 locals {
   is_production = "${var.stage == "prod" ? 1 : 0}"
 }

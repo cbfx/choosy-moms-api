@@ -54,6 +54,9 @@ module "giphy_lambda" {
   aws_region = "${var.aws_region}"
   role = "${aws_iam_role.lambda_exec.arn}"
   bucket = "${aws_s3_bucket.lambdas.id}"
+  environment_variables = {
+    GIPHY_API_KEY = "${var.giphy_api_key}"
+  }
 }
 
 module "users_lambda" {
