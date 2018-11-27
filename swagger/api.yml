@@ -50,6 +50,25 @@ paths:
         passthroughBehavior: "when_no_match"
         credentials: "${invoker_role}"
         uri: "${users_invocation_arn}"
+  /users/{user-id}/collections:
+    x-amazon-apigateway-any-method:
+      security:
+        - UserPool: []
+      parameters:
+        - in: path
+          name: user-id
+          required: true
+          description: The cognito generated unique identifier of the user.
+          schema:
+            type: string
+            format: uuid
+      responses: {}
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: "POST"
+        passthroughBehavior: "when_no_match"
+        credentials: "${invoker_role}"
+        uri: "${collections_invocation_arn}"
   /users/{user-id}/collections/{collection-id}:
     x-amazon-apigateway-any-method:
       security:
@@ -76,6 +95,25 @@ paths:
         passthroughBehavior: "when_no_match"
         credentials: "${invoker_role}"
         uri: "${collections_invocation_arn}"
+  /users/{user-id}/saved:
+    x-amazon-apigateway-any-method:
+      security:
+        - UserPool: []
+      parameters:
+        - in: path
+          name: user-id
+          required: true
+          description: The cognito generated unique identifier of the user.
+          schema:
+            type: string
+            format: uuid
+      responses: {}
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: "POST"
+        passthroughBehavior: "when_no_match"
+        credentials: "${invoker_role}"
+        uri: "${saved_invocation_arn}"
   /users/{user-id}/saved/{saved-id}:
     x-amazon-apigateway-any-method:
       security:
