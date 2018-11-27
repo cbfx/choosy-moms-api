@@ -5,13 +5,20 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient();
 module.exports = function(event, context, callback) {
   'use strict';
 
+  console.log('executing saved create lambda');
+  console.log('event:  ', event);
+  console.log('context:  ', context);
+
+  const userId = context.requestContext.identity.cognitoIdentityId;
+  let body;
+
   const params = {
 		TableName: config.tableName,
     Item: {
-      userId: request.body.userId,
-      gifId: request.body.gifId,
-      gifPreview: request.body.gifPreview,
-      collectionId: request.body.collectionId
+      userId: userId,
+      gifId: event.body.gifId,
+      gifPreviewUrl: event.body.gifPreviewUrl,
+      collectionId: event.body.collectionId
     }
 	};
 
