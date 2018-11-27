@@ -28,6 +28,7 @@ data "aws_iam_policy_document" "base_lambda_policy" {
       "lambda:InvokeFunction",
       "xray:PutTraceSegments",
       "xray:PutTelemetryRecords",
+      "dynamodb:*"
     ]
 
     resources = ["*"]
