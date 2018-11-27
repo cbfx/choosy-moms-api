@@ -1,6 +1,14 @@
 version: 2
 
 references:
+  container_config_node: &container_config_node
+    docker:
+      - image: circleci/node:10.8.0
+
+  container_config_python: &container_config_python
+    docker:
+      - image: circleci/python:3.6.1
+
   workspace_root: &workspace_root
     /tmp/workspace
 
@@ -11,6 +19,48 @@ references:
   deploy_job_requirements: &deploy_job_requirements
     requires:
       - build
+      - download_terraform
+
+  deploy_environment_variables: &deploy_environment_variables
+    environment: &environment
+      TF_VERSION: 0.11.10
+      TF_LOG: debug
+
+  terraform_cache_key: &terraform_cache_key
+    terraform-cache-beta-v1-0.11.10
+
+  terraform_cache_path: &terraform_cache_path
+    ~/0.11.10
+
+  restore_terraform: &restore_terraform
+    restore_cache:
+      keys:
+        - *terraform_cache_key
+
+  output_terraform_version: &output_terraform_version
+    run:
+      name: Output terraform version
+      command: terraform version
+
+  export_terraform_client_to_path: &export_terraform_client_to_path
+    run:
+      name: Export terraform client to path
+      command: echo 'export PATH=~/${TF_VERSION}:$PATH' >> $BASH_ENV
+
+  install_aws_cli: &install_aws_cli
+    run:
+      name: Install AWS cli
+      command: pip install awscli --upgrade --user
+
+  export_awscli_to_path: &export_awscli_to_path
+    run:
+      name: Export awscli to path
+      command: echo 'export PATH=~/.local/bin:$PATH' >> $BASH_ENV
+
+  output_aws_cli_version: &output_aws_cli_version
+    run:
+      name: Output aws version
+      command: aws --version
 
 jobs:
   build:
@@ -32,6 +82,7 @@ jobs:
           root: *workspace_root
           paths:
             - build
+
   shellcheck:
     docker:
       - image: nlknguyen/alpine-shellcheck:v0.4.6
@@ -42,20 +93,31 @@ jobs:
           command: |
             find . -type f -name '*.sh' | wc -l
             find . -type f -name '*.sh' | xargs shellcheck --external-sources
+
+  download_terraform:
+    <<: *container_config_node
+    <<: *deploy_environment_variables
+    steps:
+      - *restore_terraform
+      - run: mkdir -p ~/${TF_VERSION}
+      - run: if [[ ! -e ~/${TF_VERSION}/terraform ]]; then wget https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip -O t.zip && unzip t.zip -d ~/${TF_VERSION}; fi
+      - save_cache:
+          key: *terraform_cache_key
+          paths:
+            - *terraform_cache_path
+
   deploy_custom:
-    docker:
-      - image: circleci/terraform:0.11.10
+    <<: *container_config_python
+    <<: *deploy_environment_variables
     steps:
       - *attach_workspace
       - checkout
-      - run:
-          name: "Configure jq var"
-          command: |
-            JQ=/usr/bin/jq
-      - run:
-          name: "Download and install jq"
-          command: |
-            curl https://stedolan.github.io/jq/download/linux64/jq > $JQ && chmod +x $JQ
+      - *restore_terraform
+      - *export_terraform_client_to_path
+      - *output_terraform_version
+      - *install_aws_cli
+      - *export_awscli_to_path
+      - *output_aws_cli_version
       - run:
           name: restore build dir into workspace (for terraform to use)
           command: cp -R /tmp/workspace/build build
@@ -77,20 +139,19 @@ jobs:
           working_directory: terraform/
           name: "Apply Terraform Infrastructure Plan"
           command: terraform apply tf.tfplan
+
   deploy_staging:
-    docker:
-      - image: circleci/terraform:0.11.10
+    <<: *container_config_python
+    <<: *deploy_environment_variables
     steps:
       - *attach_workspace
       - checkout
-      - run:
-          name: "Configure jq var"
-          command: |
-            JQ=/usr/bin/jq
-      - run:
-          name: "Download and install jq"
-          command: |
-            curl https://stedolan.github.io/jq/download/linux64/jq > $JQ && chmod +x $JQ
+      - *restore_terraform
+      - *export_terraform_client_to_path
+      - *output_terraform_version
+      - *install_aws_cli
+      - *export_awscli_to_path
+      - *output_aws_cli_version
       - run:
           name: restore build dir into workspace (for terraform to use)
           command: cp -R /tmp/workspace/build build
@@ -112,20 +173,19 @@ jobs:
           working_directory: terraform/
           name: "Apply Terraform Infrastructure Plan"
           command: terraform apply tf.tfplan
+
   deploy_production:
-    docker:
-      - image: circleci/terraform:0.11.10
+    <<: *container_config_python
+    <<: *deploy_environment_variables
     steps:
       - *attach_workspace
       - checkout
-      - run:
-          name: "Configure jq var"
-          command: |
-            JQ=/usr/bin/jq
-      - run:
-          name: "Download and install jq"
-          command: |
-            curl https://stedolan.github.io/jq/download/linux64/jq > $JQ && chmod +x $JQ
+      - *restore_terraform
+      - *export_terraform_client_to_path
+      - *output_terraform_version
+      - *install_aws_cli
+      - *export_awscli_to_path
+      - *output_aws_cli_version
       - run:
           name: restore build dir into workspace (for terraform to use)
           command: cp -R /tmp/workspace/build build
@@ -154,6 +214,7 @@ workflows:
   branch_deploy:
     jobs:
       - shellcheck
+      - download_terraform
       - build:
           requires:
             - shellcheck
@@ -172,6 +233,12 @@ workflows:
 
   production_deploy:
     jobs:
+      - download_terraform:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
       - shellcheck:
           filters:
             branches:
@@ -181,6 +248,7 @@ workflows:
       - deploy_production:
           requires:
             - shellcheck
+            - download_terraform
           filters:
             branches:
               ignore: /.*/
