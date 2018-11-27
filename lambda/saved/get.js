@@ -2,7 +2,7 @@ const AWS = require('aws-sdk');
 const config = require('./config.js');
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
-exports.default = function(event, context, callback) {
+module.exports = function(event, context, callback) {
   'use strict';
 
   const queryStringParameters = event.queryStringParameters || {};
