@@ -49,7 +49,7 @@ resource "aws_iam_role_policy" "base_lambda_policy" {
 module "giphy_lambda" {
   source = "./modules/lambda"
   alias = "${var.stage}"
-  service_name = "${var.service_name}"
+  service_name = "${var.service_name}-${var.stage}"
   name =  "giphy"
   package = "../build/giphy.zip"
   aws_region = "${var.aws_region}"
@@ -63,7 +63,7 @@ module "giphy_lambda" {
 module "users_lambda" {
   source = "./modules/lambda"
   alias = "${var.stage}"
-  service_name = "${var.service_name}"
+  service_name = "${var.service_name}-${var.stage}"
   name =  "users"
   package = "../build/users.zip"
   aws_region = "${var.aws_region}"
@@ -74,7 +74,7 @@ module "users_lambda" {
 module "collections_lambda" {
   source = "./modules/lambda"
   alias = "${var.stage}"
-  service_name = "${var.service_name}"
+  service_name = "${var.service_name}-${var.stage}"
   name =  "collections"
   package = "../build/collections.zip"
   aws_region = "${var.aws_region}"
@@ -88,7 +88,7 @@ module "collections_lambda" {
 module "saved_lambda" {
   source = "./modules/lambda"
   alias = "${var.stage}"
-  service_name = "${var.service_name}"
+  service_name = "${var.service_name}-${var.stage}"
   name =  "saved"
   package = "../build/saved.zip"
   aws_region = "${var.aws_region}"
