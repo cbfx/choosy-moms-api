@@ -11,7 +11,9 @@
     "npm": "6.2.0"
   },
   "config": {},
-  "scripts": {},
+  "scripts": {
+    "postversion": "./scripts/trigger-production-deploy.sh"
+  },
   "dependencies": {
     "aws-sdk": "^2.4.11",
     "node-fetch": "2.3.0"

@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC2021,SC2002,SC2034
 
 # If you don't want to deploy the latest version, you can just specify the SHA
 # of an older revision as the only argument to this script.
@@ -19,19 +20,19 @@ SHA1=$1
 # See .git/config and `git remote -v` for more info.
 REMOTE=$2
 
-if [ -z $1 ]; then
+if [ -z "$1" ]; then
     # If no SHA1 specified, we have to make sure that we'll deploy from the
     # master branch.
-    BRANCH_NAME=`git symbolic-ref HEAD | cut -d"/" -f3`
+    BRANCH_NAME=$(git symbolic-ref HEAD | cut -d"/" -f3)
     if [[ "${BRANCH_NAME}" != "master" ]]; then
         echo "Production deploys only allowed from the master branch."
         exit 1
     fi
 
-    SHA1=`git rev-parse HEAD`
+    SHA1=$(git rev-parse HEAD)
 fi
 
-if [ -z $2 ]; then
+if [ -z "$2" ]; then
     REMOTE=origin
 fi
 
