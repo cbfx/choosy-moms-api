@@ -80,6 +80,9 @@ module "collections_lambda" {
   aws_region = "${var.aws_region}"
   role = "${aws_iam_role.lambda_exec.arn}"
   bucket = "${aws_s3_bucket.lambdas.id}"
+  environment_variables = {
+    DYNAMO_TABLE_NAME = "${aws_dynamodb_table.collections.id}"
+  }
 }
 
 module "saved_lambda" {
@@ -91,4 +94,7 @@ module "saved_lambda" {
   aws_region = "${var.aws_region}"
   role = "${aws_iam_role.lambda_exec.arn}"
   bucket = "${aws_s3_bucket.lambdas.id}"
+  environment_variables = {
+    DYNAMO_TABLE_NAME = "${aws_dynamodb_table.saved.id}"
+  }
 }
