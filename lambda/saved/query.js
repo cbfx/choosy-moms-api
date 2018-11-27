@@ -35,7 +35,7 @@ module.exports = function(event, context, callback) {
         }
       });
 
-      return res;
+      return callback(null, response);
   	})
     .catch((err) => {
       response.statusCode = err.output.statusCode;
@@ -45,9 +45,6 @@ module.exports = function(event, context, callback) {
         status: err.output.statusCode.toString(),
       }]);
 
-      return err;
+      return callback(null, response);
     })
-    .finally(() => {
-      callback(null, response);
-    });
 }
