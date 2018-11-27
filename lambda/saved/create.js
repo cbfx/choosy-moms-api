@@ -1,16 +1,16 @@
-import AWS from 'aws-sdk';
-import config from './config';
-
+const AWS = require('aws-sdk');
+const config = require('./config.js');
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
 exports.default = function(event, context, callback) {
   'use strict';
 
-  const { userId } = event.queryStringParameters;
+  const queryStringParameters = event.queryStringParameters || {};
+  const userId = queryStringParameters.userId;
 
   const params = {
 		TableName: config.tableName,
-    KeyConditionExpression: "UserId = :u",
+    KeyConditionExpression: "userId = :u",
     ExpressionAttributeValues: {
       ":u": userId
     }
@@ -31,7 +31,7 @@ exports.default = function(event, context, callback) {
       response.statusCode = 200;
       response.body = JSON.stringify({
         data: {
-          items: [...res.Items]
+          items: res.Items
         }
       });
 
