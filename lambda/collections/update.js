@@ -17,7 +17,7 @@ module.exports = function(event, context, callback) {
       userId,
       collectionId
     },
-    UpdateExpression: "set name :n",
+    UpdateExpression: "set name = :n",
     ExpressionAttributeValues: {
       ":n": body.name
     },

@@ -17,9 +17,10 @@ module.exports = function(event, context, callback) {
       userId,
       gifId
     },
-    UpdateExpression: "set gifPreviewUrl :g",
+    UpdateExpression: "set gifPreviewUrl = :g, collectionId = :c",
     ExpressionAttributeValues: {
-      ":g": body.gifPreviewUrl
+      ":g": body.gifPreviewUrl,
+      ":c": body.collectionId
     },
     ReturnValues: "UPDATED_NEW"
 	};
