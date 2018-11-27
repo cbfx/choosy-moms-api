@@ -1,12 +1,12 @@
 resource "aws_dynamodb_table" "collections" {
-  name           = "${replace(var.service_name_readable, " ", "")}.Collections.V1"
+  name           = "${var.service_name}-collections"
   read_capacity  = 1
   write_capacity = 1
-  hash_key       = "user_id"
+  hash_key       = "userId"
   range_key      = "id"
 
   attribute {
-    name = "user_id"
+    name = "userId"
     type = "S"
   }
 
@@ -17,14 +17,14 @@ resource "aws_dynamodb_table" "collections" {
 }
 
 resource "aws_dynamodb_table" "saved" {
-  name           = "${replace(var.service_name_readable, " ", "")}.Saved.V1"
+  name           = "${var.service_name}-saved"
   read_capacity  = 1
   write_capacity = 1
-  hash_key       = "user_id"
+  hash_key       = "userId"
   range_key      = "id"
 
   attribute {
-    name = "user_id"
+    name = "userId"
     type = "S"
   }
 
