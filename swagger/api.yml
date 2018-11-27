@@ -50,12 +50,12 @@ paths:
         passthroughBehavior: "when_no_match"
         credentials: "${invoker_role}"
         uri: "${users_invocation_arn}"
-  /users/{user-id}/collections:
+  /collections:
     x-amazon-apigateway-any-method:
       security:
         - UserPool: []
       parameters:
-        - in: path
+        - in: query
           name: user-id
           required: true
           description: The cognito generated unique identifier of the user.
@@ -69,18 +69,11 @@ paths:
         passthroughBehavior: "when_no_match"
         credentials: "${invoker_role}"
         uri: "${collections_invocation_arn}"
-  /users/{user-id}/collections/{collection-id}:
+  /collections/{collection-id}:
     x-amazon-apigateway-any-method:
       security:
         - UserPool: []
       parameters:
-        - in: path
-          name: user-id
-          required: true
-          description: The cognito generated unique identifier of the user.
-          schema:
-            type: string
-            format: uuid
         - in: path
           name: collection-id
           required: false
@@ -95,12 +88,12 @@ paths:
         passthroughBehavior: "when_no_match"
         credentials: "${invoker_role}"
         uri: "${collections_invocation_arn}"
-  /users/{user-id}/saved:
+  /saved:
     x-amazon-apigateway-any-method:
       security:
         - UserPool: []
       parameters:
-        - in: path
+        - in: query
           name: user-id
           required: true
           description: The cognito generated unique identifier of the user.
@@ -114,18 +107,11 @@ paths:
         passthroughBehavior: "when_no_match"
         credentials: "${invoker_role}"
         uri: "${saved_invocation_arn}"
-  /users/{user-id}/saved/{saved-id}:
+  /saved/{saved-id}:
     x-amazon-apigateway-any-method:
       security:
         - UserPool: []
       parameters:
-        - in: path
-          name: user-id
-          required: true
-          description: The cognito generated unique identifier of the user.
-          schema:
-            type: string
-            format: uuid
         - in: path
           name: saved-id
           required: false
