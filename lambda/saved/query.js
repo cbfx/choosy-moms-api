@@ -5,14 +5,15 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient();
 module.exports = function(event, context, callback) {
   'use strict';
 
-  const queryStringParameters = event.queryStringParameters || {};
-  const userId = queryStringParameters.userId;
+  const claims = event.requestContext.authorizer.claims;
+  const userId = claims['cognito:username'];
 
   const params = {
 		TableName: config.tableName,
-    KeyConditionExpression: "userId = :u",
+    KeyConditionExpression: "userId = :u and gifId = :g",
     ExpressionAttributeValues: {
-      ":u": userId
+      ":u": userId,
+      ":g": gifId
     }
 	};
 

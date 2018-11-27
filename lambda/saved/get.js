@@ -5,14 +5,17 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient();
 module.exports = function(event, context, callback) {
   'use strict';
 
-  const queryStringParameters = event.queryStringParameters || {};
-  const userId = queryStringParameters.userId;
+  const pathParameters = event.pathParameters || {};
+  const claims = event.requestContext.authorizer.claims;
+  const userId = claims['cognito:username'];
+  const gifId = pathParameters.gifId;
 
   const params = {
 		TableName: config.tableName,
     KeyConditionExpression: "userId = :u",
     ExpressionAttributeValues: {
-      ":u": userId
+      ":u": userId,
+      ":u": gifId
     }
 	};
 
@@ -38,13 +41,9 @@ module.exports = function(event, context, callback) {
       return callback(null, response);
   	})
     .catch((err) => {
-      response.statusCode = err.output.statusCode;
-      response.body.errors = JSON.stringify([{
-        title: err.output.payload.error,
-        detail: err.message,
-        status: err.output.statusCode.toString(),
-      }]);
+      response.statusCode = 400;
+      response.body.errors = JSON.stringify([err]);
 
       return callback(null, response);
-    })
+    });
 }

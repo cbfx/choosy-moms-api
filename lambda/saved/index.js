@@ -8,7 +8,7 @@ exports.handler = function(event, context, callback) {
   'use strict';
 
   const pathParameters = event.pathParameters || {};
-  const savedId = pathParameters.savedId;
+  const gifId = pathParameters.savedId;
 
   switch(event.httpMethod) {
     case 'POST':
@@ -16,7 +16,7 @@ exports.handler = function(event, context, callback) {
       break;
 
     case 'GET':
-      if (savedId) {
+      if (gifId) {
         return get(event, context, callback);
       } else {
         return query(event, context, callback);

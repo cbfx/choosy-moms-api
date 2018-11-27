@@ -5,15 +5,22 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient();
 module.exports = function(event, context, callback) {
   'use strict';
 
-  const queryStringParameters = event.queryStringParameters || {};
-  const userId = queryStringParameters.userId;
+  const claims = event.requestContext.authorizer.claims;
+  const userId = claims['cognito:username'];
+  const pathParameters = event.pathParameters || {};
+  const gifId = pathParameters.gifId;
 
   const params = {
 		TableName: config.tableName,
-    KeyConditionExpression: "userId = :u",
+    Key: {
+      userId,
+      gifId
+    },
+    UpdateExpression: "set gifId :g",
     ExpressionAttributeValues: {
-      ":u": userId
-    }
+      ":g": gifId
+    },
+    ReturnValues: "UPDATED_NEW"
 	};
 
   const response = {
@@ -25,7 +32,7 @@ module.exports = function(event, context, callback) {
     body: {}
   };
 
-  return dynamoDb.query(params)
+  return dynamoDb.update(params)
     .promise()
     .then((res) => {
       response.statusCode = 200;
@@ -38,12 +45,8 @@ module.exports = function(event, context, callback) {
       return callback(null, response);
   	})
     .catch((err) => {
-      response.statusCode = err.output.statusCode;
-      response.body.errors = JSON.stringify([{
-        title: err.output.payload.error,
-        detail: err.message,
-        status: err.output.statusCode.toString(),
-      }]);
+      response.statusCode = 400;
+      response.body.errors = JSON.stringify([err]);
 
       return callback(null, response);
     })
