@@ -8,9 +8,21 @@ consumes:
   - application/json
 produces:
   - application/json
+securityDefinitions:
+  UserPool:
+    type: "apiKey"
+    name: "Authorization"
+    in: "header"
+    x-amazon-apigateway-authtype: "cognito_user_pools"
+    x-amazon-apigateway-authorizer:
+      type: "cognito_user_pools"
+      providerARNs:
+        - "${cognito_user_pool_arn}"
 paths:
   /users:
     x-amazon-apigateway-any-method:
+      security:
+        - UserPool: []
       responses: {}
       x-amazon-apigateway-integration:
         type: "aws_proxy"
@@ -20,6 +32,8 @@ paths:
         uri: "${users_invocation_arn}"
   /users/{user-id}:
     x-amazon-apigateway-any-method:
+      security:
+        - UserPool: []
       parameters:
         - in: path
           name: user-id
@@ -37,6 +51,8 @@ paths:
         uri: "${users_invocation_arn}"
   /users/{user-id}/collections/{collection-id}:
     x-amazon-apigateway-any-method:
+      security:
+        - UserPool: []
       parameters:
         - in: path
           name: user-id
@@ -61,6 +77,8 @@ paths:
         uri: "${collections_invocation_arn}"
   /users/{user-id}/saved/{saved-id}:
     x-amazon-apigateway-any-method:
+      security:
+        - UserPool: []
       parameters:
         - in: path
           name: user-id
@@ -85,8 +103,6 @@ paths:
         uri: "${saved_invocation_arn}"
   /giphy/{proxy+}:
     x-amazon-apigateway-any-method:
-      security:
-        - api_key: []
       responses: {}
       x-amazon-apigateway-integration:
         type: "aws_proxy"
