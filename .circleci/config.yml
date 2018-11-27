@@ -48,8 +48,14 @@ jobs:
     steps:
       - *attach_workspace
       - checkout
-      - run: sudo apt-get update
-      - run: sudo apt-get install jq
+      - run:
+          name: "Configure jq var"
+          command: |
+            JQ=/usr/bin/jq
+      - run:
+          name: "Download and install jq"
+          command: |
+            curl https://stedolan.github.io/jq/download/linux64/jq > $JQ && chmod +x $JQ
       - run:
           name: restore build dir into workspace (for terraform to use)
           command: cp -R /tmp/workspace/build build
@@ -77,8 +83,14 @@ jobs:
     steps:
       - *attach_workspace
       - checkout
-      - run: sudo apt-get update
-      - run: sudo apt-get install jq
+      - run:
+          name: "Configure jq var"
+          command: |
+            JQ=/usr/bin/jq
+      - run:
+          name: "Download and install jq"
+          command: |
+            curl https://stedolan.github.io/jq/download/linux64/jq > $JQ && chmod +x $JQ
       - run:
           name: restore build dir into workspace (for terraform to use)
           command: cp -R /tmp/workspace/build build
@@ -106,8 +118,14 @@ jobs:
     steps:
       - *attach_workspace
       - checkout
-      - run: sudo apt-get update
-      - run: sudo apt-get install jq
+      - run:
+          name: "Configure jq var"
+          command: |
+            JQ=/usr/bin/jq
+      - run:
+          name: "Download and install jq"
+          command: |
+            curl https://stedolan.github.io/jq/download/linux64/jq > $JQ && chmod +x $JQ
       - run:
           name: restore build dir into workspace (for terraform to use)
           command: cp -R /tmp/workspace/build build
