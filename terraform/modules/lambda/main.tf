@@ -6,7 +6,7 @@ resource "aws_s3_bucket_object" "lambda_package_object" {
 }
 
 resource "aws_lambda_function" "lambda_function" {
-  function_name = "300fm-${var.name}"
+  function_name = "${var.service_name}-${var.name}"
   s3_bucket = "${var.bucket}"
   s3_key    = "${basename(var.package)}"
   s3_object_version = "${aws_s3_bucket_object.lambda_package_object.version_id}"

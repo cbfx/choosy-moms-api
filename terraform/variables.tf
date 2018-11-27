@@ -5,7 +5,12 @@ variable "aws_region" {
 
 variable "service_name" {
   type = "string"
-  default = "choosy_moms_api"
+  default = "choosy-moms-api"
+}
+
+variable "service_name_readable" {
+  type = "string"
+  default = "Choosy Moms API"
 }
 
 variable "api_domain" {
@@ -18,9 +23,18 @@ variable "swagger_file" {
   default = "../swagger/api.yml"
 }
 
+variable "contact_email" {
+  type = "string"
+  default = "infra@cbfx.net"
+}
+
 variable "stage" {
   type = "string"
   default = "live"
+}
+
+variable "giphy_api_key" {
+  type = "string"
 }
 
 locals {
@@ -28,7 +42,15 @@ locals {
 }
 
 locals {
-  deploy_domain = "${local.is_production ? format("api.%s", var.api_domain) : format("%s.api.%s", var.stage, var.api_domain)}"
-  cert_domain   = "${local.is_production ? var.api_domain : format("*.%s", var.api_domain)}"
-  domain_zone   = "${var.api_domain}"
+  api_url = "${format("api.%s", var.api_domain)}"
+  login_url = "${format("login.%s", var.api_domain)}"
+}
+
+locals {
+  login_domain          = "${local.is_production ? local.login_url : format("%s-%s", var.stage, local.login_url)}"
+  login_cert_domain     = "${format("*.%s", var.api_domain)}"
+  api_deploy_domain     = "${local.is_production ? local.api_url : format("%s-%s", var.stage, local.api_url)}"
+  api_cert_domain       = "${format("*.%s", var.api_domain)}"
+  api_domain_zone       = "${var.api_domain}"
+  ui_domain             = "${local.is_production ? var.api_domain : format("%s.%s", var.stage, var.api_domain)}"
 }

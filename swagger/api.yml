@@ -2,15 +2,28 @@ swagger: '2.0'
 info:
   version: "v1"
   title: "choosy-moms-api-${stage}"
+basePath: /v1
 schemes:
   - https
 consumes:
   - application/json
 produces:
   - application/json
+securityDefinitions:
+  UserPool:
+    type: "apiKey"
+    name: "Authorization"
+    in: "header"
+    x-amazon-apigateway-authtype: "cognito_user_pools"
+    x-amazon-apigateway-authorizer:
+      type: "cognito_user_pools"
+      providerARNs:
+        - "${cognito_user_pool_arn}"
 paths:
   /users:
     x-amazon-apigateway-any-method:
+      security:
+        - UserPool: []
       responses: {}
       x-amazon-apigateway-integration:
         type: "aws_proxy"
@@ -18,10 +31,103 @@ paths:
         passthroughBehavior: "when_no_match"
         credentials: "${invoker_role}"
         uri: "${users_invocation_arn}"
-  /giphy/{proxy+}:
+  /users/{user-id}:
     x-amazon-apigateway-any-method:
       security:
-        - api_key: []
+        - UserPool: []
+      parameters:
+        - in: path
+          name: user-id
+          required: true
+          description: The cognito generated unique identifier of the user.
+          schema:
+            type: string
+            format: uuid
+      responses: {}
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: "POST"
+        passthroughBehavior: "when_no_match"
+        credentials: "${invoker_role}"
+        uri: "${users_invocation_arn}"
+  /collections:
+    x-amazon-apigateway-any-method:
+      security:
+        - UserPool: []
+      parameters:
+        - in: query
+          name: user-id
+          required: true
+          description: The cognito generated unique identifier of the user.
+          schema:
+            type: string
+            format: uuid
+      responses: {}
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: "POST"
+        passthroughBehavior: "when_no_match"
+        credentials: "${invoker_role}"
+        uri: "${collections_invocation_arn}"
+  /collections/{collection-id}:
+    x-amazon-apigateway-any-method:
+      security:
+        - UserPool: []
+      parameters:
+        - in: path
+          name: collection-id
+          required: false
+          description: The service generated unique identifier of the collection.
+          schema:
+            type: string
+            format: uuid
+      responses: {}
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: "POST"
+        passthroughBehavior: "when_no_match"
+        credentials: "${invoker_role}"
+        uri: "${collections_invocation_arn}"
+  /saved:
+    x-amazon-apigateway-any-method:
+      security:
+        - UserPool: []
+      parameters:
+        - in: query
+          name: user-id
+          required: true
+          description: The cognito generated unique identifier of the user.
+          schema:
+            type: string
+            format: uuid
+      responses: {}
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: "POST"
+        passthroughBehavior: "when_no_match"
+        credentials: "${invoker_role}"
+        uri: "${saved_invocation_arn}"
+  /saved/{saved-id}:
+    x-amazon-apigateway-any-method:
+      security:
+        - UserPool: []
+      parameters:
+        - in: path
+          name: saved-id
+          required: false
+          description: The cognito generated unique identifier of the user.
+          schema:
+            type: string
+            format: uuid
+      responses: {}
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: "POST"
+        passthroughBehavior: "when_no_match"
+        credentials: "${invoker_role}"
+        uri: "${saved_invocation_arn}"
+  /giphy/{proxy+}:
+    x-amazon-apigateway-any-method:
       responses: {}
       x-amazon-apigateway-integration:
         type: "aws_proxy"

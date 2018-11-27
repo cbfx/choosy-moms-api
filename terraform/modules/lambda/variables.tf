@@ -2,6 +2,8 @@ variable "alias" {}
 
 variable "name" {}
 
+variable "service_name" {}
+
 variable "package" {}
 
 variable "aws_region" {}
