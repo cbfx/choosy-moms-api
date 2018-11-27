@@ -1,5 +1,5 @@
 resource "aws_dynamodb_table" "collections" {
-  name           = "${var.service_name}-collections"
+  name           = "${var.service_name}-${var.stage}-collections"
   read_capacity  = 1
   write_capacity = 1
   hash_key       = "userId"
@@ -17,7 +17,7 @@ resource "aws_dynamodb_table" "collections" {
 }
 
 resource "aws_dynamodb_table" "saved" {
-  name           = "${var.service_name}-saved"
+  name           = "${var.service_name}-${var.stage}-saved"
   read_capacity  = 1
   write_capacity = 1
   hash_key       = "userId"

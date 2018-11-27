@@ -21,7 +21,7 @@ data "aws_iam_policy_document" "lambda_invoke" {
 }
 
 resource "aws_iam_role" "api_gateway_invoker" {
-  name               = "${var.service_name}_APIGatewayInvoker"
+  name               = "${var.service_name}_${var.stage}_APIGatewayInvoker"
   assume_role_policy = "${data.aws_iam_policy_document.api_gateway_invoker.json}"
 }
 

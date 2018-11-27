@@ -36,7 +36,7 @@ data "aws_iam_policy_document" "base_lambda_policy" {
 }
 
 resource "aws_iam_role" "lambda_exec" {
-  name = "${var.service_name}_lambda"
+  name = "${var.service_name}_${var.stage}_lambda"
   assume_role_policy = "${data.aws_iam_policy_document.lambda_exec.json}"
 }
 
