@@ -36,7 +36,7 @@ data "aws_iam_policy_document" "base_lambda_policy" {
 }
 
 resource "aws_iam_role" "lambda_exec" {
-  name = "${var.service_name}_lambda"
+  name = "${var.service_name}_${var.stage}_lambda"
   assume_role_policy = "${data.aws_iam_policy_document.lambda_exec.json}"
 }
 
@@ -80,6 +80,9 @@ module "collections_lambda" {
   aws_region = "${var.aws_region}"
   role = "${aws_iam_role.lambda_exec.arn}"
   bucket = "${aws_s3_bucket.lambdas.id}"
+  environment_variables = {
+    DYNAMO_TABLE_NAME = "${aws_dynamodb_table.collections.id}"
+  }
 }
 
 module "saved_lambda" {
@@ -91,4 +94,7 @@ module "saved_lambda" {
   aws_region = "${var.aws_region}"
   role = "${aws_iam_role.lambda_exec.arn}"
   bucket = "${aws_s3_bucket.lambdas.id}"
+  environment_variables = {
+    DYNAMO_TABLE_NAME = "${aws_dynamodb_table.saved.id}"
+  }
 }

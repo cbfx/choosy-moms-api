@@ -1,5 +1,4 @@
 const AWS = require('aws-sdk');
-const config = require('./config.js');
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
 module.exports = function(event, context, callback) {
@@ -9,7 +8,7 @@ module.exports = function(event, context, callback) {
   const userId = claims['cognito:username'];
 
   const params = {
-		TableName: config.tableName,
+		TableName: process.env.DYNAMO_TABLE_NAME,
     KeyConditionExpression: "userId = :u",
     ExpressionAttributeValues: {
       ":u": userId

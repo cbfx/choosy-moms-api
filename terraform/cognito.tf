@@ -7,7 +7,7 @@ data "aws_acm_certificate" "ssl_cert_for_login" {
 module "cognito_auth" {
   source  = "github.com/cbfx/terraform-aws-cognito-auth?ref=master"
 
-  namespace                      = "${var.service_name}-auth"
+  namespace                      = "${var.service_name}-${var.stage}-auth"
   region                         = "${var.aws_region}"
   cognito_identity_pool_name     = "${var.service_name_readable} Admin"
   cognito_identity_pool_provider = "${local.login_domain}"
