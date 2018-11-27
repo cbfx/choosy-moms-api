@@ -42,5 +42,5 @@ module.exports = function(event, context, callback) {
       response.body.errors = JSON.stringify([err]);
 
       return callback(null, response);
-    })
+    });
 }
