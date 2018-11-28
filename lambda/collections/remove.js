@@ -7,7 +7,7 @@ module.exports = function(event, context, callback) {
   const claims = event.requestContext.authorizer.claims;
   const userId = claims['cognito:username'];
   const pathParameters = event.pathParameters || {};
-  const collectionId = pathParameters.collectionId;
+  const collectionId = pathParameters['collection-id'];
 
   const params = {
 		TableName: process.env.DYNAMO_TABLE_NAME,

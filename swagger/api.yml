@@ -107,7 +107,7 @@ paths:
         passthroughBehavior: "when_no_match"
         credentials: "${invoker_role}"
         uri: "${saved_invocation_arn}"
-  /saved/{saved-id}:
+  /saved/{gif-id}:
     x-amazon-apigateway-any-method:
       security:
         - UserPool: []

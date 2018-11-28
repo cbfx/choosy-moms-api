@@ -8,7 +8,7 @@ exports.handler = function(event, context, callback) {
   'use strict';
 
   const pathParameters = event.pathParameters || {};
-  const gifId = pathParameters.savedId;
+  const gifId = pathParameters['gif-id'];
 
   switch(event.httpMethod) {
     case 'POST':

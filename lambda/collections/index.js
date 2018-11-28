@@ -1,34 +1,35 @@
-import create from './create';
-import query from './query';
-import get from './get';
-import remove from './remove';
-import update from './update';
+const create = require('./create.js');
+const get = require('./get.js');
+const query = require('./query.js');
+const remove = require('./remove.js');
+const update = require('./update.js');
 
 exports.handler = function(event, context, callback) {
-  const VERB = event.httpMethod;
-  const { userId, collectionId } = event.pathParameters;
+  'use strict';
 
-  switch(VERB) {
-    case POST: {
-      create(event, context, callback);
+  const pathParameters = event.pathParameters || {};
+  const collectionId = pathParameters['collection-id'];
+
+  switch(event.httpMethod) {
+    case 'POST':
+      return create(event, context, callback);
       break;
-    }
-    case GET: {
-      if (userId && collectionId) {
-        get(event, context, callback);
+
+    case 'GET':
+      if (collectionId) {
+        return get(event, context, callback);
       } else {
-        query(event, context, callback);
+        return query(event, context, callback);
       }
 
       break;
-    }
-    case DELETE: {
-      remove(event, context, callback);
+
+    case 'DELETE':
+      return remove(event, context, callback);
       break;
-    }
-    case PUT: {
-      update(event, context, callback);
+
+    case 'PUT':
+      return update(event, context, callback);
       break;
-    }
   }
 };
