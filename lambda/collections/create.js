@@ -13,7 +13,7 @@ module.exports = function(event, context, callback) {
 		TableName: process.env.DYNAMO_TABLE_NAME,
     Item: {
       userId: userId,
-      id: uuidv4(),
+      collectionId: uuidv4(),
       name: body.name
     }
 	};

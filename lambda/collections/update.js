@@ -7,7 +7,7 @@ module.exports = function(event, context, callback) {
   const claims = event.requestContext.authorizer.claims;
   const userId = claims['cognito:username'];
   const pathParameters = event.pathParameters || {};
-  const collectionId = pathParameters.collectionId;
+  const collectionId = pathParameters['collection-id'];
   const body = JSON.parse(event.body);
 
   const params = {

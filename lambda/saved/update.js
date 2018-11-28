@@ -7,7 +7,7 @@ module.exports = function(event, context, callback) {
   const claims = event.requestContext.authorizer.claims;
   const userId = claims['cognito:username'];
   const pathParameters = event.pathParameters || {};
-  const gifId = pathParameters.gifId;
+  const gifId = pathParameters['gif-id'];
   const body = JSON.parse(event.body);
 
   const params = {
@@ -16,9 +16,8 @@ module.exports = function(event, context, callback) {
       userId,
       gifId
     },
-    UpdateExpression: "set gifPreviewUrl = :g, collectionId = :c",
+    UpdateExpression: "set collectionId = :c",
     ExpressionAttributeValues: {
-      ":g": body.gifPreviewUrl,
       ":c": body.collectionId
     },
     ReturnValues: "UPDATED_NEW"

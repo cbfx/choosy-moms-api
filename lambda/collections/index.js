@@ -8,7 +8,7 @@ exports.handler = function(event, context, callback) {
   'use strict';
 
   const pathParameters = event.pathParameters || {};
-  const collectionId = pathParameters.collectionId;
+  const collectionId = pathParameters['collection-id'];
 
   switch(event.httpMethod) {
     case 'POST':
