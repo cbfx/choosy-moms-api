@@ -74,4 +74,4 @@ and then finally push the new tag into Github.
 - `npm version patch`
 - `npm version minor`
 - `npm version major`
-- etc
+- etc.
